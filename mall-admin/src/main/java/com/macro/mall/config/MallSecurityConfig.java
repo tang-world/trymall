@@ -2,6 +2,7 @@ package com.macro.mall.config;
 
 import com.macro.mall.model.UmsResource;
 import com.macro.mall.security.component.DynamicSecurityService;
+import com.macro.mall.security.config.SecurityConfig;
 import com.macro.mall.service.UmsAdminService;
 import com.macro.mall.service.UmsResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true) //开启方法前方法后验证身份
-public class MallSecurityConfig {
+public class MallSecurityConfig extends SecurityConfig {
 	@Autowired
 	private UmsAdminService adminService;
 	@Autowired
@@ -49,5 +50,17 @@ public class MallSecurityConfig {
 			}
 			return map;
 		};
+		//可能是lambda表示式错误导致不能启动
+		/*return new DynamicSecurityService() {
+			@Override
+			public Map<String, ConfigAttribute> loadDataSource() {
+				Map<String, ConfigAttribute> map = new ConcurrentHashMap<>();
+				List<UmsResource> resourceList = resourceService.listAll();
+				for (UmsResource resource : resourceList) {
+					map.put(resource.getUrl(), new org.springframework.security.access.SecurityConfig(resource.getId() + ":" + resource.getName()));
+				}
+				return map;
+			}
+		};*/
 	}
 }
